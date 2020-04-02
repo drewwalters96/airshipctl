@@ -1,5 +1,7 @@
 package config
 
+import "opendev.org/airship/airshipctl/pkg/remote/redfish"
+
 // Constants related to the ClusterType type
 const (
 	Ephemeral                   = "ephemeral"
@@ -35,7 +37,7 @@ const (
 	// Modules
 	AirshipDefaultBootstrapImage = "quay.io/airshipit/isogen:latest"
 	AirshipDefaultIsoURL         = "http://localhost:8099/debian-custom.iso"
-	AirshipDefaultRemoteType     = "redfish"
+	AirshipDefaultRemoteType     = redfish.ClientType
 )
 
 const (
