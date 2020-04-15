@@ -27,12 +27,11 @@ func NewRemoteDirectCommand(rootSettings *environment.AirshipCTLSettings) *cobra
 		Use:   "remotedirect",
 		Short: "Bootstrap ephemeral node",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			a, err := remote.NewAdapter(rootSettings)
-			if err != nil {
+			if err := remote.DoRemoteDirect(rootSettings); err != nil {
 				return err
 			}
 
-			return a.DoRemoteDirect()
+			return nil
 		},
 	}
 

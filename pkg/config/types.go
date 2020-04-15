@@ -84,6 +84,9 @@ type Cluster struct {
 
 	// Bootstrap configuration this clusters ephemeral hosts will rely on
 	Bootstrap string `json:"bootstrap-info"`
+
+	// Management configuration all hosts use
+	ManagementConfiguration string `json:"management-configuration"`
 }
 
 // Modules encapsulates all module configurations
@@ -91,7 +94,8 @@ type Cluster struct {
 // Configuration that the Document Module would need
 // Configuration that the Workflows Module would need
 type Modules struct {
-	BootstrapInfo map[string]*Bootstrap `json:"bootstrapInfo"`
+	ManagementConfiguration map[string]*ManagementConfiguration `json:"managementConfiguration"`
+	BootstrapInfo       map[string]*Bootstrap               `json:"bootstrapInfo"`
 }
 
 // Context is a tuple of references to a cluster (how do I communicate with a kubernetes context),
@@ -218,17 +222,19 @@ type Builder struct {
 
 // RemoteDirect configuration options
 type RemoteDirect struct {
-	// RemoteType specifies type of epehemeral node managfement (e.g redfish,
-	// smash e.t.c.)
-	RemoteType string `json:"remoteType,omitempty"`
 	// IsoURL specifies url to download ISO image for epehemeral node
 	IsoURL string `json:"isoUrl,omitempty"`
-	// Ignore SSL certificate check. This options is useful for remote APIs
-	// with non-trusted or self-signed SSL certificates
-	Insecure bool `json:"insecure,omitempty"`
-	// Allow remotedirect requests to be proxied.  This defaults to false
-	// because in general, most users will want to communicate directly
-	// with redfish and other bmc urls directly even if the environment
-	// has a proxy set
-	UseProxy bool `json:"useproxy,omitempty"`
 }
+
+// ManagementConfiguration holds configuration data for remote all remote systems within a context.
+type ManagementConfiguration struct {
+	Type ManagementType `json:"managementType"`
+	// Insecure indicates whether the SSL certificate should be checked on remote management request.
+	Insecure bool `json:"insecure,omitempty"`
+	// UseProxy indicates whether airshipctl should transmit remote management requests through a proxy server when
+	// one is configured in an environment.
+	UseProxy bool `json:"useProxy,omitempty"`
+}
+
+// ManagementType idenfities the type of out-of-band management a host uses, e.g. "redfish", "redfish-dell".
+type ManagementType string

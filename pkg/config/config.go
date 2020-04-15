@@ -727,6 +727,27 @@ func (c *Config) CurrentContextBootstrapInfo() (*Bootstrap, error) {
 	return bootstrap, nil
 }
 
+// CurrentContextManagementConfig returns the management options for the current context
+func (c *Config) CurrentContextManagementConfig() (*ManagementConfiguration, error) {
+	currentCluster, err := c.CurrentContextCluster()
+	if err != nil {
+		return nil, err
+	}
+
+	if currentCluster.ManagementConfiguration == "" {
+		return nil, ErrMissingConfig{
+			What: fmt.Sprintf("No management config defined for context %q", c.CurrentContext),
+		}
+	}
+
+	managementCfg, exists := c.ModulesConfig.ManagementConfiguration[currentCluster.ManagementConfiguration]
+	if !exists {
+		return nil, ErrBootstrapInfoNotFound{Name: currentCluster.Bootstrap}
+	}
+
+	return managementCfg, nil
+}
+
 // Purge removes the config file
 func (c *Config) Purge() error {
 	return os.Remove(c.loadedConfigPath)

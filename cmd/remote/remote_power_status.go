@@ -28,17 +28,20 @@ func NewPowerStatusCommand(rootSettings *environment.AirshipCTLSettings) *cobra.
 		Short: "Retrieve the power status of a host",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			a, err := remote.NewAdapter(rootSettings)
+			a, err := remote.NewAdapter(rootSettings, remote.ByName(args[0]))
 			if err != nil {
 				return err
 			}
 
-			powerStatus, err := a.OOBClient.SystemPowerStatus(a.Context, args[0])
-			if err != nil {
-				return err
-			}
+			for _, host := range a.Hosts {
+				powerStatus, err := host.SystemPowerStatus(host.Context)
+				if err != nil {
+					return err
+				}
 
-			fmt.Fprintf(cmd.OutOrStdout(), "Remote host %s has power status: %s\n", args[0], powerStatus)
+				fmt.Fprintf(cmd.OutOrStdout(), "Remote host %s has power status: %s\n", args[0],
+					powerStatus)
+			}
 
 			return nil
 		},

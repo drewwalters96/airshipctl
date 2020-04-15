@@ -28,16 +28,18 @@ func NewRebootCommand(rootSettings *environment.AirshipCTLSettings) *cobra.Comma
 		Short: "Reboot a host",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			a, err := remote.NewAdapter(rootSettings)
+			a, err := remote.NewAdapter(rootSettings, remote.ByName(args[0]))
 			if err != nil {
 				return err
 			}
 
-			if err = a.OOBClient.RebootSystem(a.Context, args[0]); err != nil {
-				return err
-			}
+			for _, host := range a.Hosts {
+				if err := host.RebootSystem(host.Context); err != nil {
+					return err
+				}
 
-			fmt.Fprintf(cmd.OutOrStdout(), "Rebooted remote host %s\n", args[0])
+				fmt.Fprintf(cmd.OutOrStdout(), "Rebooted remote host %s\n", args[0])
+			}
 
 			return nil
 		},

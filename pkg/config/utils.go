@@ -65,8 +65,7 @@ func NewConfig() *Config {
 						OutputMetadataFileName: "output-metadata.yaml",
 					},
 					RemoteDirect: &RemoteDirect{
-						RemoteType: AirshipDefaultRemoteType,
-						IsoURL:     AirshipDefaultIsoURL,
+						IsoURL: AirshipDefaultIsoURL,
 					},
 				},
 			},

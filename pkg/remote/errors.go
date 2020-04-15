@@ -29,3 +29,21 @@ func NewRemoteDirectErrorf(format string, v ...interface{}) error {
 	e.Message = fmt.Sprintf(format, v...)
 	return e
 }
+
+type ErrUnknownManagementType struct {
+	aerror.AirshipError
+	Type string
+}
+
+func (e ErrUnknownManagementType) Error() string {
+	return fmt.Sprintf("unknown management type: %s", e.Type)
+}
+
+type ErrMissingBootstrapInfoOption struct {
+	aerror.AirshipError
+	What string
+}
+
+func (e ErrMissingBootstrapInfoOption) Error() string {
+	return fmt.Sprintf("missing bootstrapInfo option: %s", e.What)
+}

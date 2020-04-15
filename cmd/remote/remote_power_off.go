@@ -28,16 +28,18 @@ func NewPowerOffCommand(rootSettings *environment.AirshipCTLSettings) *cobra.Com
 		Short: "Shutdown a host",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			a, err := remote.NewAdapter(rootSettings)
+			a, err := remote.NewAdapter(rootSettings, remote.ByName(args[0]))
 			if err != nil {
 				return err
 			}
 
-			if err := a.OOBClient.SystemPowerOff(a.Context, args[0]); err != nil {
-				return err
-			}
+			for _, host := range a.Hosts {
+				if err := host.SystemPowerOff(host.Context); err != nil {
+					return err
+				}
 
-			fmt.Fprintf(cmd.OutOrStdout(), "Remote host %s powered off\n", args[0])
+				fmt.Fprintf(cmd.OutOrStdout(), "Remote host %s powered off\n", args[0])
+			}
 
 			return nil
 		},
